@@ -25,7 +25,7 @@ public class Cliente {
         String serverName = "localhost";
       int port = Integer.parseInt("2222");
       try {
-         
+          tes
             System.out.println("Connecting to " + serverName + " on port " + port);
             Socket client = new Socket(serverName, port);
          
