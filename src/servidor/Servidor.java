@@ -6,7 +6,7 @@ import java.io.*;
 public class Servidor extends Thread
 {
    private ServerSocket serverSocket;
-   
+
    public Servidor(int port) throws IOException
    {
       serverSocket = new ServerSocket(port);
@@ -19,8 +19,6 @@ public class Servidor extends Thread
       {
          try
          {
-            System.out.println("Waiting for client on port " +
-            serverSocket.getLocalPort() + "...");
             Socket server = serverSocket.accept();
             System.out.println("Just connected to "
                   + server.getRemoteSocketAddress());
