@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Arrays;
 
 public class ServidorThread extends Thread{
@@ -41,8 +40,7 @@ public class ServidorThread extends Thread{
         }        
         i++;
         
-        byte[] portaArray = Arrays.copyOfRange(pdu, i, i+4);
-        
+        byte[] portaArray = Arrays.copyOfRange(pdu, i, i+4);        
         final ByteBuffer bb = ByteBuffer.wrap(portaArray);
         
         int porta = bb.getInt();
