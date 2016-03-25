@@ -4,6 +4,9 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Arrays;
 
 public class ServidorThread extends Thread{
 
@@ -19,14 +22,35 @@ public class ServidorThread extends Thread{
       try{
         InputStream in = client.getInputStream();
 
-        byte[] b = new byte[8];
+        byte[] pdu = new byte[50];
 
-        in.read(b);
+        in.read(pdu);
+        
+        String nome = "";
+        String ip = "";
+        int i;
 
-        System.out.println("Recebi: " + b.toString());
+        for(i=8; (char)pdu[i] != '\0'; i++){
+            nome += (char)pdu[i];
+        }
+
+        i++;
+
+        for(; (char)pdu[i] != '\0'; i++){
+            ip += (char)pdu[i];
+        }        
+        i++;
+        
+        byte[] portaArray = Arrays.copyOfRange(pdu, i, i+4);
+        
+        final ByteBuffer bb = ByteBuffer.wrap(portaArray);
+        
+        int porta = bb.getInt();
+
+        System.out.println("User: " + nome + ", ip: " + ip + ", porta: " + porta);
 
         OutputStream out = client.getOutputStream();
-        out.write(b);
+        out.write(pdu);
       }catch(Exception e){}//POR AQUI ALGUMA COISA
     }
 }

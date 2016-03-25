@@ -5,6 +5,7 @@
  */
 package business;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Random;
 
@@ -24,8 +25,10 @@ public class PDU {
         
         int port = getPort();
         byte[] portBytes = ByteBuffer.allocate(4).putInt(port).array();
+        /*BigInteger bi = BigInteger.valueOf(port);
+        byte[] portBytes = bi.toByteArray();*/
         byte[] info = infoString.getBytes();
-        
+                
         int pduSize = 9 + info.length + portBytes.length;
         byte[] pdu = new byte[pduSize];
         byte[] pduAux = new byte[8];
@@ -48,7 +51,7 @@ public class PDU {
         aux.put(pduAux);
         aux.put(info);
         aux.put(portBytes);
-        aux.put((byte)'\0');
+        aux.put((byte)'c');
         
         return pdu;
     }
