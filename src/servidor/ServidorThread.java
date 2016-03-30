@@ -4,8 +4,6 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 public class ServidorThread extends Thread{
 
@@ -27,6 +25,7 @@ public class ServidorThread extends Thread{
         
         String nome = "";
         String ip = "";
+        String porta = "";
         int i;
 
         for(i=8; (char)pdu[i] != '\0'; i++){
@@ -40,10 +39,12 @@ public class ServidorThread extends Thread{
         }        
         i++;
         
-        byte[] portaArray = Arrays.copyOfRange(pdu, i, i+4);        
-        final ByteBuffer bb = ByteBuffer.wrap(portaArray);
+        for(; (char)pdu[i] != '\0'; i++){
+            porta += (char)pdu[i];
+        }        
+        i++;
         
-        int porta = bb.getInt();
+        Utilizador u = new Utilizador(nome, porta, ip);
 
         System.out.println("User: " + nome + ", ip: " + ip + ", porta: " + porta);
 

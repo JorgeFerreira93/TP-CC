@@ -20,9 +20,9 @@ public class Cliente {
         
         Scanner in = new Scanner(System.in);
         System.out.print(">>");
-        String user = in.nextLine();        
+        String user = in.nextLine();
         
-        Socket clientSocket = new Socket("localhost", 6789);
+        Socket clientSocket = new Socket("172.26.19.34", 6789);
         
         byte[] pdu = new PDU().registerPDU(user, "ip", (byte)1);
         
