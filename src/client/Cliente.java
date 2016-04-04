@@ -22,14 +22,23 @@ public class Cliente {
         System.out.print(">>");
         String user = in.nextLine();
         
-        Socket clientSocket = new Socket("172.26.19.34", 6789);
+        Socket clientSocket = new Socket("localhost", 6789);
         
         byte[] pdu = new PDU().registerPDU(user, "ip", (byte)1);
         
-        
         OutputStream out = clientSocket.getOutputStream();
         out.write(pdu);
-        while(true){}
+        
+        while(true){            
+            System.out.print(">>");
+            String aux = in.nextLine();
+            
+            //O dummy só serve para testar se a conexao esta direita
+            pdu = new PDU().dummyPDU();
+            
+            out = clientSocket.getOutputStream();
+            out.write(pdu);
+        }
                 
         //clientSocket.close();
     }

@@ -44,6 +44,20 @@ public class PDU {
 
         return pdu;
     }
+    
+    public byte[] dummyPDU(){
+        byte[] pduAux = new byte[7];
+        
+        pduAux[0] = 0;
+        pduAux[1] = 0;
+        pduAux[2] = 0;
+        pduAux[3] = 0;
+        pduAux[4] = 0;
+        pduAux[5] = 0;
+        pduAux[6] = 0;
+        
+        return pduAux;
+    }
 
     private int getPort(){
 
