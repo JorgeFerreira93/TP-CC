@@ -14,7 +14,7 @@ import java.util.Scanner;
  *
  * @author Jorge
  */
-public class Cliente {
+public class ClienteEscrita {
     
     public static void main(String[] args) throws Exception {
         
@@ -24,7 +24,7 @@ public class Cliente {
         
         Socket clientSocket = new Socket("localhost", 6789);
         
-        byte[] pdu = new PDU().registerPDU(user, "ip", (byte)1);
+        byte[] pdu = new PDU().registerPDU(user, clientSocket.getLocalAddress().toString(), (byte)1);
         
         OutputStream out = clientSocket.getOutputStream();
         out.write(pdu);
@@ -32,6 +32,12 @@ public class Cliente {
         while(true){            
             System.out.print(">>");
             String aux = in.nextLine();
+            
+            pdu = new PDU().consultRequestPDU("banda", "musica");
+            
+            for(int i=0; i<50; i++){
+                System.out.println(pdu[i]);
+            }
             
             //O dummy só serve para testar se a conexao esta direita
             pdu = new PDU().dummyPDU();

@@ -45,6 +45,32 @@ public class PDU {
         return pdu;
     }
     
+    public byte[] consultRequestPDU(String banda, String musica){
+        
+        ByteBuffer aux;
+        String infoString = banda + '\0' + musica;
+
+        byte[] info = infoString.getBytes();
+        int pduSize = 8 + info.length;
+        byte[] pdu = new byte[pduSize];
+        byte[] pduAux = new byte[7];
+
+        aux = ByteBuffer.wrap(pdu);
+
+        pduAux[0] = 1;
+        pduAux[1] = 0;
+        pduAux[2] = 2;
+        pduAux[3] = 0;
+        pduAux[4] = 0;
+        pduAux[5] = 0;
+        pduAux[6] = 0;
+
+        aux.put(pduAux);
+        aux.put(info);
+
+        return pdu;
+    }
+    
     public byte[] dummyPDU(){
         byte[] pduAux = new byte[7];
         
