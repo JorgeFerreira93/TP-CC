@@ -15,37 +15,26 @@ import java.util.Scanner;
  * @author Jorge
  */
 public class ClienteEscrita {
-    
+
     public static void main(String[] args) throws Exception {
-        
+
         Scanner in = new Scanner(System.in);
         System.out.print(">>");
         String user = in.nextLine();
-        
+        int port;
+
         Socket clientSocket = new Socket("localhost", 6789);
-        
-        byte[] pdu = new PDU().registerPDU(user, clientSocket.getLocalAddress().toString(), (byte)1);
-        
+
+        port=PDU.getPort();
+        byte[] pdu = PDU.registerPDU(user, clientSocket.getLocalAddress().toString(), (byte)1, port);
+
         OutputStream out = clientSocket.getOutputStream();
         out.write(pdu);
-        
-        while(true){            
-            System.out.print(">>");
-            String aux = in.nextLine();
+
+        while(true){
             
-            pdu = new PDU().consultRequestPDU("banda", "musica");
-            
-            for(int i=0; i<50; i++){
-                System.out.println(pdu[i]);
-            }
-            
-            //O dummy só serve para testar se a conexao esta direita
-            pdu = new PDU().dummyPDU();
-            
-            out = clientSocket.getOutputStream();
-            out.write(pdu);
         }
-                
+
         //clientSocket.close();
     }
 }

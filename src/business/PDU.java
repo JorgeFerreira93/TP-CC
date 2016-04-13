@@ -14,14 +14,10 @@ import java.util.Random;
  */
 public class PDU {
 
-    public PDU() {
-    }
-
-    public byte[] registerPDU(String user, String ip, byte type){
+    public static byte[] registerPDU(String user, String ip, byte type, int port){
 
         ByteBuffer aux;
-        int port = getPort();
-        String infoString = user + '\0' + ip + '\0'+port;
+        String infoString = user + '\0' + ip + '\0' + port;
 
         byte[] info = infoString.getBytes();
         int pduSize = 9 + info.length;
@@ -44,9 +40,9 @@ public class PDU {
 
         return pdu;
     }
-    
-    public byte[] consultRequestPDU(String banda, String musica){
-        
+
+    public static byte[] consultRequestPDU(String banda, String musica){
+
         ByteBuffer aux;
         String infoString = banda + '\0' + musica;
 
@@ -70,22 +66,8 @@ public class PDU {
 
         return pdu;
     }
-    
-    public byte[] dummyPDU(){
-        byte[] pduAux = new byte[7];
-        
-        pduAux[0] = 0;
-        pduAux[1] = 0;
-        pduAux[2] = 0;
-        pduAux[3] = 0;
-        pduAux[4] = 0;
-        pduAux[5] = 0;
-        pduAux[6] = 0;
-        
-        return pduAux;
-    }
 
-    private int getPort(){
+    public static int getPort(){
 
         Random random = new Random();
 
