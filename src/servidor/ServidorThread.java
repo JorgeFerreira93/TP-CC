@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class ServidorThread extends Thread{
 
@@ -26,18 +27,22 @@ public class ServidorThread extends Thread{
 
             in.read(pdu);
 
-            if(pdu[2] == 1){
-                registaPDU(pdu);
-            }
-            else{
-                dummyPDU();
+            switch(pdu[2]){
+                case 1:
+                    registaPDU(pdu);
+                    break;
+                case 2:
+                    consultRequest(pdu);
+                    break;
+                default:
+                    break;
             }
         }
         
       }catch(Exception e){}//POR AQUI ALGUMA COISA
     }
     
-    private void registaPDU(byte[] pdu){
+    private void registaPDU(byte[] pdu) throws Exception{
         
         String nome = "";
         String ip = "";
@@ -65,12 +70,38 @@ public class ServidorThread extends Thread{
         tabel.put(tabel.size()+1, utilizador);
         
         System.out.println("User: " + nome + ", id: " + tabel.size() + ", ip: " + ip + ", porta: " + porta);
+        OutputStream out = client.getOutputStream();
+        out.write(utilizador.getIdTabela());
     }
     
-    private void dummyPDU(){
-        System.out.println("Recebi algo do User: " + this.utilizador.getId() + 
-                                          ", id: " + this.utilizador.getIdTabela() + 
-                                          ", ip: " + this.utilizador.getIp() + 
-                                          ", porta: " + this.utilizador.getPort());
+    private void consultRequest(byte[] pdu) throws Exception{
+        
+        ArrayList<String> aux = new ArrayList<>();
+        
+        for(Utilizador u: tabel.values()){
+            if(u.getIdTabela() != utilizador.getIdTabela()){
+                
+                Socket clientSocket = new Socket(u.getIp(), Integer.parseInt(u.getPort()));
+                
+                OutputStream out = clientSocket.getOutputStream();
+                out.write(pdu);
+                
+                InputStream in = clientSocket.getInputStream();
+                
+                byte[] pduResponse = new byte[50];
+                in.read(pduResponse);
+                
+                int i;
+                String id = "";
+
+                for(i=7; (char)pduResponse[i] != '\0'; i++){
+                    id += (char)pduResponse[i];
+                }
+                
+                aux.add(id);
+            }
+        }
+        
+        System.out.println(aux.toString());
     }
 }

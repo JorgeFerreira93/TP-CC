@@ -8,6 +8,7 @@ package client;
 import java.io.OutputStream;
 import java.net.Socket;
 import business.PDU;
+import java.io.InputStream;
 import java.util.Scanner;
 
 /**
@@ -26,15 +27,25 @@ public class ClienteEscrita {
         Socket clientSocket = new Socket("localhost", 6789);
 
         port=PDU.getPort();
-        byte[] pdu = PDU.registerPDU(user, clientSocket.getLocalAddress().toString(), (byte)1, port);
+        byte[] pdu = PDU.registerPDU(user, clientSocket.getLocalAddress().getHostAddress(), (byte)1, port);
 
         OutputStream out = clientSocket.getOutputStream();
         out.write(pdu);
 
+        InputStream inp = clientSocket.getInputStream();
+        
+        int id = inp.read();
+        
+        ClienteLeitura cl = new ClienteLeitura(port, id);        
+        cl.start();
+        
         while(true){
+            System.out.print(">>");
+            user = in.nextLine();
             
+            pdu = PDU.consultRequestPDU("banda", "musica");
+            
+            out.write(pdu);
         }
-
-        //clientSocket.close();
     }
 }

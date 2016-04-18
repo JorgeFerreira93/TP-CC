@@ -14,7 +14,6 @@ public class Servidor{
  
         while(true){
             Socket connectionSocket = serverSocket.accept();
-            System.out.println(connectionSocket.getLocalAddress().toString());
             ServidorThread t=new ServidorThread(tabela,connectionSocket);
             t.start();
         }
