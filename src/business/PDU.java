@@ -66,12 +66,39 @@ public class PDU {
 
         return pdu;
     }
+    
+    public static byte[] consultResponsePDU(int id, String ip, String porta, int res){
+
+        ByteBuffer aux;
+        String infoString = String.valueOf(id) + '\0' + ip + '\0' + porta;
+
+        byte[] info = infoString.getBytes();
+        int pduSize = 9 + info.length;
+        byte[] pdu = new byte[pduSize];
+        byte[] pduAux = new byte[7];
+
+        aux = ByteBuffer.wrap(pdu);
+
+        pduAux[0] = 1;
+        pduAux[1] = 0;
+        pduAux[2] = 3;
+        pduAux[3] = 0;
+        pduAux[4] = 0;
+        pduAux[5] = 0;
+        pduAux[6] = 0;
+
+        aux.put(pduAux);
+        aux.put(info);
+        aux.put((byte)res);
+
+        return pdu;
+    }
 
     public static int getPort(){
 
         Random random = new Random();
 
-        int number = random.nextInt((100000 - 49152) + 1) + 49152;
+        int number = random.nextInt((50000 - 49152) + 1) + 49152;
 
         System.out.println(number);
 

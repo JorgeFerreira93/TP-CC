@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class ServidorThread extends Thread{
 
@@ -26,11 +27,15 @@ public class ServidorThread extends Thread{
 
             in.read(pdu);
 
-            if(pdu[2] == 1){
-                registaPDU(pdu);
-            }
-            else{
-                dummyPDU();
+            switch(pdu[2]){
+                case 1:
+                    registaPDU(pdu);
+                    break;
+                case 2:
+                    consultRequest(pdu);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -60,13 +65,48 @@ public class ServidorThread extends Thread{
         }
         i++;
 
+
         utilizador = new Utilizador(nome, porta, ip, table.size() + 1);
 
-        if(tablea.containsKey(nome))
+        if(table.containsKey(nome))
           return false;
 
         table.put(nome, utilizador);
          return true;
 
+        //System.out.println("User: " + nome + ", id: " + table.size() + ", ip: " + ip + ", porta: " + porta);
+        //OutputStream out = client.getOutputStream();
+        //out.write(utilizador.getIdTabela());
+    }
+
+    private void consultRequest(byte[] pdu) throws Exception{
+
+        ArrayList<String> aux = new ArrayList<>();
+
+        for(Utilizador u: table.values()){
+            if(u.getIdTabela() != utilizador.getIdTabela()){
+
+                Socket clientSocket = new Socket(u.getIp(), Integer.parseInt(u.getPort()));
+
+                OutputStream out = clientSocket.getOutputStream();
+                out.write(pdu);
+
+                InputStream in = clientSocket.getInputStream();
+
+                byte[] pduResponse = new byte[50];
+                in.read(pduResponse);
+
+                int i;
+                String id = "";
+
+                for(i=7; (char)pduResponse[i] != '\0'; i++){
+                    id += (char)pduResponse[i];
+                }
+
+                aux.add(id);
+            }
+        }
+
+        System.out.println(aux.toString());
     }
 }
