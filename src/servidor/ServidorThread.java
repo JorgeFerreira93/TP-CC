@@ -7,18 +7,18 @@ import java.io.OutputStream;
 
 public class ServidorThread extends Thread{
 
-    protected HashMap<Integer, Utilizador> tabel;
+    protected HashMap<String, Utilizador> table;
     private Socket client;
     private Utilizador utilizador;
 
-    public ServidorThread(HashMap<Integer, Utilizador> newtabel,Socket newclient){
-      this.tabel=newtabel;
+    public ServidorThread(HashMap<String, Utilizador> newtable,Socket newclient){
+      this.table=newtable;
       this.client=newclient;
     }
 
     public void run(){
       try{
-          
+
         while(true){
             InputStream in = client.getInputStream();
 
@@ -33,12 +33,12 @@ public class ServidorThread extends Thread{
                 dummyPDU();
             }
         }
-        
+
       }catch(Exception e){}//POR AQUI ALGUMA COISA
     }
-    
-    private void registaPDU(byte[] pdu){
-        
+
+    private boolean registaPDU(byte[] pdu){
+
         String nome = "";
         String ip = "";
         String porta = "";
@@ -52,25 +52,21 @@ public class ServidorThread extends Thread{
 
         for(; (char)pdu[i] != '\0'; i++){
             ip += (char)pdu[i];
-        }        
+        }
         i++;
-        
+
         for(; (char)pdu[i] != '\0'; i++){
             porta += (char)pdu[i];
-        }        
+        }
         i++;
-        
-        utilizador = new Utilizador(nome, porta, ip, tabel.size() + 1);
-        
-        tabel.put(tabel.size()+1, utilizador);
-        
-        System.out.println("User: " + nome + ", id: " + tabel.size() + ", ip: " + ip + ", porta: " + porta);
-    }
-    
-    private void dummyPDU(){
-        System.out.println("Recebi algo do User: " + this.utilizador.getId() + 
-                                          ", id: " + this.utilizador.getIdTabela() + 
-                                          ", ip: " + this.utilizador.getIp() + 
-                                          ", porta: " + this.utilizador.getPort());
+
+        utilizador = new Utilizador(nome, porta, ip, table.size() + 1);
+
+        if(tablea.containsKey(nome))
+          return false;
+
+        table.put(nome, utilizador);
+         return true;
+
     }
 }
