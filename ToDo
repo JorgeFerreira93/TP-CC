@@ -1,0 +1,7 @@
+Interpretador de Comandos no ClienteEscrita
+possivelmente completar consultRequest
+ConsultResponse
+ProbeRequest e ProbeResponse(UDP)
+Request e Data(UDP)
+Investigar UDP e possiveis melhorias
+Investigar file searching
