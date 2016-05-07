@@ -1,10 +1,15 @@
 package servidor;
 
+import business.PDU;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ServidorThread extends Thread{
 
@@ -12,9 +17,9 @@ public class ServidorThread extends Thread{
     private Socket client;
     private Utilizador utilizador;
 
-    public ServidorThread(HashMap<String, Utilizador> newtable,Socket newclient){
-      this.table=newtable;
-      this.client=newclient;
+    public ServidorThread(HashMap<String, Utilizador> newtable, Socket newclient){
+        this.table=newtable;
+        this.client=newclient;
     }
 
     public void run(){
@@ -29,10 +34,17 @@ public class ServidorThread extends Thread{
 
             switch(pdu[2]){
                 case 1:
-                    registaPDU(pdu);
+                    int id = registaPDU(pdu);
+                    
+                    OutputStream out = client.getOutputStream();
+                    out.write(id);
+                    
                     break;
                 case 2:
-                    consultRequest(pdu);
+                    byte[] res = consultRequest(pdu);
+                    DataOutputStream dout = new DataOutputStream(client.getOutputStream());
+                    dout.writeInt(res.length);
+                    dout.write(res);
                     break;
                 default:
                     break;
@@ -42,7 +54,7 @@ public class ServidorThread extends Thread{
       }catch(Exception e){}//POR AQUI ALGUMA COISA
     }
 
-    private boolean registaPDU(byte[] pdu){
+    private int registaPDU(byte[] pdu){
 
         String nome = "";
         String ip = "";
@@ -68,45 +80,44 @@ public class ServidorThread extends Thread{
 
         utilizador = new Utilizador(nome, porta, ip, table.size() + 1);
 
-        if(table.containsKey(nome))
-          return false;
-
+        if(table.containsKey(nome)){
+            return -1;
+        }
+        
         table.put(nome, utilizador);
-         return true;
-
-        //System.out.println("User: " + nome + ", id: " + table.size() + ", ip: " + ip + ", porta: " + porta);
-        //OutputStream out = client.getOutputStream();
-        //out.write(utilizador.getIdTabela());
+        
+        return utilizador.getIdTabela();
     }
 
-    private void consultRequest(byte[] pdu) throws Exception{
+    private byte[] consultRequest(byte[] pdu) throws Exception{
 
-        ArrayList<String> aux = new ArrayList<>();
+        ArrayList<byte[]> aux = new ArrayList<>();
+        
+        System.out.println(table.size());
 
         for(Utilizador u: table.values()){
             if(u.getIdTabela() != utilizador.getIdTabela()){
-
+                
+                /* Criar threads para cada cliente? */
+                
                 Socket clientSocket = new Socket(u.getIp(), Integer.parseInt(u.getPort()));
 
                 OutputStream out = clientSocket.getOutputStream();
                 out.write(pdu);
 
-                InputStream in = clientSocket.getInputStream();
-
-                byte[] pduResponse = new byte[50];
+                DataInputStream in = new DataInputStream(clientSocket.getInputStream());
+                
+                int pduLenght = in.readInt();
+                byte[] pduResponse = new byte[pduLenght];
+                
                 in.read(pduResponse);
 
-                int i;
-                String id = "";
-
-                for(i=7; (char)pduResponse[i] != '\0'; i++){
-                    id += (char)pduResponse[i];
-                }
-
-                aux.add(id);
+                aux.add(Arrays.copyOfRange(pduResponse, 7, pduResponse.length));
             }
         }
 
-        System.out.println(aux.toString());
+        byte[] res = PDU.consultResponseListaPDU(aux);
+                
+        return res;
     }
 }

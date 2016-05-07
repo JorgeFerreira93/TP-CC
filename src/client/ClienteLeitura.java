@@ -18,10 +18,12 @@ public class ClienteLeitura extends Thread {
     
     int port;
     int idUtilizador;
+    String ip;
     
-    public ClienteLeitura(int port, int idUtilizador){
+    public ClienteLeitura(String ip, int port, int idUtilizador){
         this.port = port;
         this.idUtilizador = idUtilizador;
+        this.ip = ip;
     }
     
     public void run(){
@@ -33,7 +35,7 @@ public class ClienteLeitura extends Thread {
             
                 Socket connectionSocket = serverSocket.accept();
                 
-                ClienteThread ct = new ClienteThread(connectionSocket, idUtilizador);
+                ClienteThread ct = new ClienteThread(connectionSocket, idUtilizador, ip);
                 ct.start();
             }
         }

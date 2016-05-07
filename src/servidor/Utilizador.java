@@ -1,7 +1,5 @@
 package servidor;
 
-import jdk.nashorn.internal.runtime.regexp.joni.EncodingHelper;
-
 public class Utilizador{
   private String id;
   private String port;

@@ -6,6 +6,7 @@
 package business;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -67,10 +68,11 @@ public class PDU {
         return pdu;
     }
     
-    public static byte[] consultResponsePDU(int id, String ip, String porta, int res){
+    public static byte[] consultResponsePDU(int id, String ip, int res){
 
         ByteBuffer aux;
-        String infoString = String.valueOf(id) + '\0' + ip + '\0' + porta;
+        int porta = getPort();
+        String infoString = String.valueOf(id) + '\0' + ip + '\0' + String.valueOf(porta);
 
         byte[] info = infoString.getBytes();
         int pduSize = 9 + info.length;
@@ -93,14 +95,56 @@ public class PDU {
 
         return pdu;
     }
+    
+    public static byte[] consultResponseListaPDU(ArrayList<byte[]> lista){
+
+        ByteBuffer aux;
+        
+        int nHosts = lista.size();
+        
+        String infoString = String.valueOf(1) + '\0' + String.valueOf(nHosts);
+        
+        int tamanho = 0;
+        
+        for(byte[] b: lista){
+            tamanho += b.length;
+        }
+        
+        byte[] pduLista = new byte[tamanho];
+        ByteBuffer pdus = ByteBuffer.wrap(pduLista);
+        
+        for(byte[] b: lista){
+            pdus.put(b);
+        }
+        
+        byte[] info = infoString.getBytes();
+        int pduSize = 8 + info.length + pduLista.length;
+        byte[] pdu = new byte[pduSize];
+        byte[] pduAux = new byte[7];
+
+        aux = ByteBuffer.wrap(pdu);
+
+        pduAux[0] = 1;
+        pduAux[1] = 0;
+        pduAux[2] = 3;
+        pduAux[3] = 0;
+        pduAux[4] = 0;
+        pduAux[5] = 0;
+        pduAux[6] = 0;
+
+        aux.put(pduAux);
+        aux.put(info);
+        aux.put(pduLista);
+        aux.put((byte)1);
+
+        return pdu;
+    }
 
     public static int getPort(){
 
         Random random = new Random();
 
-        int number = random.nextInt((50000 - 49152) + 1) + 49152;
-
-        System.out.println(number);
+        int number = random.nextInt((70000 - 49152) + 1) + 49152;
 
         return number;
     }
