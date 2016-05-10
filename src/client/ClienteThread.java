@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.net.Socket;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.File;
 
 public class ClienteThread extends Thread{
 
@@ -19,7 +20,7 @@ public class ClienteThread extends Thread{
     }
 
     public void run(){
-        try{          
+        try{
           while(true){
               InputStream in = client.getInputStream();
 
@@ -41,12 +42,25 @@ public class ClienteThread extends Thread{
                   musica += (char)pdu[i];
               }
 
-              byte[] aux = PDU.consultResponsePDU(idUtilizador, this.ip, 1);
+              File path=new File("files/");
+              String[] children = path.list();
+              int found=0;
+
+              if(children!=null){
+                for (int j = 0; i < children.length; i++) {
+                  if(children[i].equals(musica)){
+                    found=1;
+                    break;
+                  }
+                }
+              }
+
+              byte[] aux = PDU.consultResponsePDU(idUtilizador, this.ip, found);
 
               DataOutputStream out = new DataOutputStream(client.getOutputStream());
               out.writeInt(aux.length);
               out.write(aux);
-          }    
+          }
         }catch(Exception e){}//POR AQUI ALGUMA COISA
     }
 }

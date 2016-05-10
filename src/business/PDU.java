@@ -67,7 +67,7 @@ public class PDU {
 
         return pdu;
     }
-    
+
     public static byte[] consultResponsePDU(int id, String ip, int res){
 
         ByteBuffer aux;
@@ -95,28 +95,28 @@ public class PDU {
 
         return pdu;
     }
-    
+
     public static byte[] consultResponseListaPDU(ArrayList<byte[]> lista){
 
         ByteBuffer aux;
-        
+
         int nHosts = lista.size();
-        
+
         String infoString = String.valueOf(1) + '\0' + String.valueOf(nHosts);
-        
+
         int tamanho = 0;
-        
+
         for(byte[] b: lista){
             tamanho += b.length;
         }
-        
+
         byte[] pduLista = new byte[tamanho];
         ByteBuffer pdus = ByteBuffer.wrap(pduLista);
-        
+
         for(byte[] b: lista){
             pdus.put(b);
         }
-        
+
         byte[] info = infoString.getBytes();
         int pduSize = 8 + info.length + pduLista.length;
         byte[] pdu = new byte[pduSize];

@@ -35,40 +35,40 @@ public class ClienteEscrita {
         OutputStream out = clientSocket.getOutputStream();
         out.write(pdu);
 
-        InputStream inp = clientSocket.getInputStream();        
+        InputStream inp = clientSocket.getInputStream();
         int id = inp.read();
-        
+
         ClienteLeitura cl = new ClienteLeitura(ip, port, id);
         cl.start();
-        
+
         while(true){
             System.out.print(">>");
             String request = in.nextLine();
-            
+
             StringTokenizer strtok = new StringTokenizer(request, " ");
-        
+
             switch(strtok.nextToken()){
                 case "request":
-                    
+
 
                     String banda = strtok.nextToken();
                     String musica = strtok.nextToken();
-                    
+
                     sendRequest(banda, musica, clientSocket);
-                    
-                    
+
+
                     break;
                 default:
                     System.out.println("Erro no comando");
                     break;
-            }     
+            }
         }
     }
-    
+
     private static void sendRequest(String banda, String musica, Socket clientSocket) throws Exception{
-        
+
         OutputStream out = clientSocket.getOutputStream();
-        
+
         byte[] pdu = PDU.consultRequestPDU(banda, musica);
         out.write(pdu);
 

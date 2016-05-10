@@ -15,26 +15,26 @@ import servidor.Utilizador;
  * @author Jorge
  */
 public class ClienteLeitura extends Thread {
-    
+
     int port;
     int idUtilizador;
     String ip;
-    
+
     public ClienteLeitura(String ip, int port, int idUtilizador){
         this.port = port;
         this.idUtilizador = idUtilizador;
         this.ip = ip;
     }
-    
+
     public void run(){
         try{
-            
+
             ServerSocket serverSocket = new ServerSocket(port);
-            
+
             while(true){
-            
+
                 Socket connectionSocket = serverSocket.accept();
-                
+
                 ClienteThread ct = new ClienteThread(connectionSocket, idUtilizador, ip);
                 ct.start();
             }
