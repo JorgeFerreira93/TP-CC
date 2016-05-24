@@ -50,12 +50,10 @@ public class ClienteEscrita {
             switch(strtok.nextToken()){
                 case "request":
 
-
                     String banda = strtok.nextToken();
                     String musica = strtok.nextToken();
 
                     sendRequest(banda, musica, clientSocket);
-
 
                     break;
                 default:

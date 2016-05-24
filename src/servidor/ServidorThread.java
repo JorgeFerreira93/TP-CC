@@ -1,7 +1,6 @@
 package servidor;
 
 import business.PDU;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
@@ -93,8 +92,6 @@ public class ServidorThread extends Thread{
 
         ArrayList<byte[]> aux = new ArrayList<>();
 
-        System.out.println(table.size());
-
         for(Utilizador u: table.values()){
             if(u.getIdTabela() != utilizador.getIdTabela()){
 
@@ -111,8 +108,12 @@ public class ServidorThread extends Thread{
                 byte[] pduResponse = new byte[pduLenght];
 
                 in.read(pduResponse);
-
-                aux.add(Arrays.copyOfRange(pduResponse, 7, pduResponse.length));
+                
+                System.out.println(pduLenght-3);
+                
+                if((char)pduResponse[pduLenght-3] == '1'){
+                    aux.add(Arrays.copyOfRange(pduResponse, 7, pduResponse.length));
+                }
             }
         }
 
