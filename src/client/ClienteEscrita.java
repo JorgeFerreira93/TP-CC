@@ -8,6 +8,7 @@ package client;
 import java.io.OutputStream;
 import java.net.Socket;
 import business.PDU;
+import java.awt.BorderLayout;
 import java.io.DataInputStream;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -53,7 +54,14 @@ public class ClienteEscrita {
                     String banda = strtok.nextToken();
                     String musica = strtok.nextToken();
 
-                    sendRequest(banda, musica, clientSocket);
+                    byte[] resposta = sendRequest(banda, musica, clientSocket);
+                    
+                    if(resposta == null){
+                        System.out.println("Não foram encontrados clients com o ficheiro");
+                    }
+                    else{
+                        probeRequest(resposta);
+                    }
 
                     break;
                 default:
@@ -63,7 +71,7 @@ public class ClienteEscrita {
         }
     }
 
-    private static void sendRequest(String banda, String musica, Socket clientSocket) throws Exception{
+    private static byte[] sendRequest(String banda, String musica, Socket clientSocket) throws Exception{
 
         OutputStream out = clientSocket.getOutputStream();
 
@@ -75,6 +83,44 @@ public class ClienteEscrita {
         int pduLenght = din.readInt();
         byte[] pduResponse = new byte[pduLenght];
         din.read(pduResponse);
-        System.out.println("Recebi isto: " + new String(pduResponse));
+        
+        if((char)pduResponse[7] == '1'){
+            return pduResponse;
+        }
+        else{
+            return null;
+        }
+    }
+    
+    private static void probeRequest(byte[] pdu){
+        
+        int nHosts = Character.getNumericValue((char)pdu[9]);
+        int i=11;
+
+        for(int n=0; n<nHosts; n++){
+            
+            String id ="", ip="", porta="";
+            
+            System.out.println(new String(pdu));
+            
+            
+            for(; (char)pdu[i] != '\0'; i++){
+                id += ( char)pdu[i];
+            }
+
+            i++;
+
+            for(; (char)pdu[i] != '\0'; i++){
+                ip += (char)pdu[i];
+            }
+            i++;
+
+            for(; (char)pdu[i] != '\0'; i++){
+                porta += (char)pdu[i];
+            }
+            i++;
+            
+            /* Enviar probe TODO */
+        }
     }
 }

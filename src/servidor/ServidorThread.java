@@ -40,6 +40,9 @@ public class ServidorThread extends Thread{
 
                     break;
                 case 2:
+                    
+                    System.out.println("O utilizador " + utilizador.getIdTabela()+ " fez um pedido request");
+                    
                     byte[] res = consultRequest(pdu);
                     DataOutputStream dout = new DataOutputStream(client.getOutputStream());
                     dout.writeInt(res.length);
@@ -84,6 +87,8 @@ public class ServidorThread extends Thread{
         }
 
         table.put(nome, utilizador);
+        
+        System.out.println("O utilizador " + nome + " conectou-se");
 
         return utilizador.getIdTabela();
     }
@@ -97,6 +102,8 @@ public class ServidorThread extends Thread{
 
                 /* Criar threads para cada cliente? */
 
+                System.out.println("A enviar para o utilizador " + u.getIdTabela());
+                
                 Socket clientSocket = new Socket(u.getIp(), Integer.parseInt(u.getPort()));
 
                 OutputStream out = clientSocket.getOutputStream();
@@ -109,16 +116,19 @@ public class ServidorThread extends Thread{
 
                 in.read(pduResponse);
                 
-                System.out.println(pduLenght-3);
-                
                 if((char)pduResponse[pduLenght-3] == '1'){
-                    aux.add(Arrays.copyOfRange(pduResponse, 7, pduResponse.length));
+                    aux.add(Arrays.copyOfRange(pduResponse, 7, pduResponse.length - 4));
+                    System.out.println("O utilizador " + u.getIdTabela() + " tem o ficheiro");
+                }
+                else{
+                    System.out.println("O utilizador " + u.getIdTabela() + " não tem o ficheiro");
                 }
             }
         }
 
-        byte[] res = PDU.consultResponseListaPDU(aux);
-
+        System.out.println("Vou construir");
+        byte[] res = PDU.consultResponseListaPDU(aux);        
+        
         return res;
     }
 }

@@ -101,7 +101,29 @@ public class PDU {
         ByteBuffer aux;
 
         int nHosts = lista.size();
+        
+        if(nHosts == 0){
+            String infoString = String.valueOf(0) + '\0' + String.valueOf(nHosts);
+            
+            byte[] info = infoString.getBytes();
+            int pduSize = 8 + info.length;
+            byte[] pdu = new byte[pduSize];
+            byte[] pduAux = new byte[7];
 
+            aux = ByteBuffer.wrap(pdu);
+
+            pduAux[0] = 1;
+            pduAux[1] = 0;
+            pduAux[2] = 3;
+            pduAux[3] = 0;
+            pduAux[4] = 0;
+            pduAux[5] = 0;
+            pduAux[6] = 0;
+
+            aux.put(pduAux);
+            aux.put(info);
+            return pdu;
+        }
         String infoString = String.valueOf(1) + '\0' + String.valueOf(nHosts);
 
         int tamanho = 0;
@@ -110,11 +132,16 @@ public class PDU {
             tamanho += b.length;
         }
 
-        byte[] pduLista = new byte[tamanho];
+        byte[] pduLista = new byte[tamanho + nHosts];
         ByteBuffer pdus = ByteBuffer.wrap(pduLista);
-
+        
         for(byte[] b: lista){
-            pdus.put(b);
+            byte[] tmp = new byte[b.length + 1];
+            byte[] end = (new String("\0")).getBytes();
+            System.arraycopy(end, 0, tmp, 0, end.length);
+            System.arraycopy(b, 0, tmp, 1, b.length);
+            System.out.println(new String(tmp));
+            pdus.put(tmp);
         }
 
         byte[] info = infoString.getBytes();
@@ -135,8 +162,8 @@ public class PDU {
         aux.put(pduAux);
         aux.put(info);
         aux.put(pduLista);
-        aux.put((byte)1);
-
+        aux.put((byte)'\0');
+        System.out.println(new String(pdu));
         return pdu;
     }
 

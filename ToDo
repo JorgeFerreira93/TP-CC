@@ -2,7 +2,7 @@ Interpretador de Comandos no ClienteEscrita(Feito para o request)
 possivelmente completar consultRequest(Feito)
 ConsultResponse(Feito)
 Leitura do consultResponse por parte do cliente
-Melhorar o consultResponse do Servidor: Selecionar apenas as respostas poositivas, enviar apenas a informação do cliente relevante em vez do pdu todo (feito)
+Melhorar o consultResponse do Servidor: Selecionar apenas as respostas poositivas, enviar apenas a informação do cliente relevante em vez do pdu todo (feito +/- Há um erro às vezes o servidor morre a manda request para os clientes, não sei porque, mas de restou funciona direito)
 Acrescentar timeout
 ProbeRequest e ProbeResponse(UDP)
 Request e Data(UDP)
