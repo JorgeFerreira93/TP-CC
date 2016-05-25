@@ -28,8 +28,7 @@ public class ClienteLeitura extends Thread {
 
     public void run(){
         try{
-
-            ServerSocket serverSocket = new ServerSocket(port);
+            ServerSocket serverSocket = new ServerSocket(this.port);
             
             while(true){
 
@@ -39,6 +38,8 @@ public class ClienteLeitura extends Thread {
                 ct.start();
             }
         }
-        catch(Exception e){}
+        catch(Exception e){
+            System.out.println(e.toString());
+        }
     }
 }

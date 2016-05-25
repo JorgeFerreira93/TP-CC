@@ -185,7 +185,7 @@ public class PDU {
 
         Random random = new Random();
 
-        int number = random.nextInt((70000 - 49152) + 1) + 49152;
+        int number = random.nextInt((65534 - 49152) + 1) + 49152;
 
         return number;
     }

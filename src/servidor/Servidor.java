@@ -3,13 +3,14 @@ package servidor;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Servidor{
 
     public static void main(String[] args) throws Exception {
 
-        HashMap<String, Utilizador> tabela = new HashMap<>();
+        ConcurrentHashMap<String, Utilizador> tabela = new ConcurrentHashMap<>();
         ServerSocket serverSocket = new ServerSocket(10000);
 
         while(true){

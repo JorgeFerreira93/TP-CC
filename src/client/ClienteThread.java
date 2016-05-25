@@ -29,8 +29,6 @@ public class ClienteThread extends Thread{
                 byte[] pdu = new byte[50];
 
                 in.read(pdu);
-                
-                System.out.println(pdu[2]);
 
                 String banda = "";
                 String musica = "";

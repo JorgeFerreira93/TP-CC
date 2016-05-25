@@ -9,14 +9,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServidorThread extends Thread{
 
-    protected HashMap<String, Utilizador> table;
+    protected ConcurrentHashMap<String, Utilizador> table;
     private Socket client;
     private Utilizador utilizador;
 
-    public ServidorThread(HashMap<String, Utilizador> newtable, Socket newclient){
+    public ServidorThread(ConcurrentHashMap<String, Utilizador> newtable, Socket newclient){
         this.table=newtable;
         this.client=newclient;
     }
@@ -89,6 +90,7 @@ public class ServidorThread extends Thread{
         table.put(nome, utilizador);
         
         System.out.println("O utilizador " + nome + " conectou-se");
+        System.out.println(table.size());
 
         return utilizador.getIdTabela();
     }
@@ -108,8 +110,6 @@ public class ServidorThread extends Thread{
 
                 OutputStream out = clientSocket.getOutputStream();
                 out.write(pdu);
-
-                System.out.println("Enviei, agora estou a espera");
                 
                 DataInputStream in = new DataInputStream(clientSocket.getInputStream());
 
@@ -128,7 +128,6 @@ public class ServidorThread extends Thread{
             }
         }
 
-        System.out.println("Vou construir");
         byte[] res = PDU.consultResponseListaPDU(aux);        
         
         return res;
