@@ -109,6 +109,8 @@ public class ServidorThread extends Thread{
                 OutputStream out = clientSocket.getOutputStream();
                 out.write(pdu);
 
+                System.out.println("Enviei, agora estou a espera");
+                
                 DataInputStream in = new DataInputStream(clientSocket.getInputStream());
 
                 int pduLenght = in.readInt();

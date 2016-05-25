@@ -68,10 +68,10 @@ public class PDU {
         return pdu;
     }
 
-    public static byte[] consultResponsePDU(int id, String ip, boolean res){
+    public static byte[] consultResponsePDU(int id, String ip, boolean res, int porta){
 
         ByteBuffer aux;
-        int porta = getPort();
+        //int porta = getPort();
         int resposta = res ? 1 : 0;
         String infoString = String.valueOf(id) + '\0' + ip + '\0' + String.valueOf(porta) + '\0' + String.valueOf(resposta);
 
@@ -164,6 +164,20 @@ public class PDU {
         aux.put(pduLista);
         aux.put((byte)'\0');
         System.out.println(new String(pdu));
+        return pdu;
+    }
+    
+    public static byte[] probeRequestPDU(){
+        byte[] pdu = new byte[7];
+
+        pdu[0] = 1;
+        pdu[1] = 0;
+        pdu[2] = 4;
+        pdu[3] = 0;
+        pdu[4] = 0;
+        pdu[5] = 0;
+        pdu[6] = 0;
+
         return pdu;
     }
 

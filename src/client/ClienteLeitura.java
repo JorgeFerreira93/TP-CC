@@ -30,12 +30,12 @@ public class ClienteLeitura extends Thread {
         try{
 
             ServerSocket serverSocket = new ServerSocket(port);
-
+            
             while(true){
 
                 Socket connectionSocket = serverSocket.accept();
 
-                ClienteThread ct = new ClienteThread(connectionSocket, idUtilizador, ip);
+                ClienteThread ct = new ClienteThread(connectionSocket, idUtilizador, ip, port);
                 ct.start();
             }
         }

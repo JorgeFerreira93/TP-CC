@@ -12,11 +12,13 @@ public class ClienteThread extends Thread{
     private Socket client;
     private int idUtilizador;
     private String ip;
+    private int porta;
 
-    public ClienteThread(Socket newclient, int idUtilizador, String ip){
+    public ClienteThread(Socket newclient, int idUtilizador, String ip, int porta){
         this.client = newclient;
         this.idUtilizador = idUtilizador;
         this.ip = ip;
+        this.porta = porta;
     }
 
     public void run(){
@@ -27,6 +29,8 @@ public class ClienteThread extends Thread{
                 byte[] pdu = new byte[50];
 
                 in.read(pdu);
+                
+                System.out.println(pdu[2]);
 
                 String banda = "";
                 String musica = "";
@@ -52,7 +56,7 @@ public class ClienteThread extends Thread{
                     }
                 }
 
-                byte[] aux = PDU.consultResponsePDU(idUtilizador, this.ip, found);
+                byte[] aux = PDU.consultResponsePDU(idUtilizador, this.ip, found, this.porta);
                 
                 DataOutputStream out = new DataOutputStream(client.getOutputStream());
                 out.writeInt(aux.length);

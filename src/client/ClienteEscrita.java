@@ -8,8 +8,8 @@ package client;
 import java.io.OutputStream;
 import java.net.Socket;
 import business.PDU;
-import java.awt.BorderLayout;
 import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 import java.util.StringTokenizer;
@@ -92,17 +92,15 @@ public class ClienteEscrita {
         }
     }
     
-    private static void probeRequest(byte[] pdu){
+    private static void probeRequest(byte[] pdu) throws IOException{
         
         int nHosts = Character.getNumericValue((char)pdu[9]);
         int i=11;
+        byte[] probePDU = PDU.probeRequestPDU();
 
         for(int n=0; n<nHosts; n++){
             
-            String id ="", ip="", porta="";
-            
-            System.out.println(new String(pdu));
-            
+            String id ="", ip="", porta="";            
             
             for(; (char)pdu[i] != '\0'; i++){
                 id += ( char)pdu[i];
@@ -120,7 +118,14 @@ public class ClienteEscrita {
             }
             i++;
             
+            System.out.println("id: " + id + " ip: " + ip + " porta: " + porta);
             /* Enviar probe TODO */
+            /*System.out.println("vou enviar para a porta " + porta);
+            Socket probeSocket = new Socket("localhost", Integer.valueOf(porta));
+
+            OutputStream out = probeSocket.getOutputStream();
+            out.write(pdu);*/
+            
         }
     }
 }
