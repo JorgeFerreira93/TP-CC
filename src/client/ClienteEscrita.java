@@ -38,6 +38,11 @@ public class ClienteEscrita {
 
         InputStream inp = clientSocket.getInputStream();
         int id = inp.read();
+        
+        if(id == 255){
+            System.out.println("Nome de utilizador já existente");
+            return;
+        }
 
         ClienteLeitura cl = new ClienteLeitura(ip, port, id);
         cl.start();
