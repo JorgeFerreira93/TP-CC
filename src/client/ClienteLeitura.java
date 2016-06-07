@@ -7,8 +7,6 @@ package client;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import servidor.ServidorThread;
-import servidor.Utilizador;
 
 /**
  *
@@ -26,6 +24,7 @@ public class ClienteLeitura extends Thread {
         this.ip = ip;
     }
 
+    @Override
     public void run(){
         try{
             ServerSocket serverSocket = new ServerSocket(this.port);

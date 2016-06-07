@@ -4,7 +4,6 @@ import business.PDU;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
-import java.util.HashMap;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServidorThread extends Thread{
 
     protected ConcurrentHashMap<String, Utilizador> table;
-    private Socket client;
+    private final Socket client;
     private Utilizador utilizador;
 
     public ServidorThread(ConcurrentHashMap<String, Utilizador> newtable, Socket newclient){
@@ -22,6 +21,7 @@ public class ServidorThread extends Thread{
         this.client=newclient;
     }
 
+    @Override
     public void run(){
       try{
 
@@ -40,15 +40,17 @@ public class ServidorThread extends Thread{
                     out.write(id);
 
                     break;
-                case 2:
                     
+                case 2:                    
                     System.out.println("O utilizador " + utilizador.getIdTabela()+ " fez um pedido request");
                     
                     byte[] res = consultRequest(pdu);
                     DataOutputStream dout = new DataOutputStream(client.getOutputStream());
                     dout.writeInt(res.length);
                     dout.write(res);
+                    
                     break;
+                    
                 default:
                     break;
             }
@@ -80,7 +82,6 @@ public class ServidorThread extends Thread{
         }
         i++;
 
-
         utilizador = new Utilizador(nome, porta, ip, table.size() + 1);
 
         if(table.containsKey(nome)){
@@ -90,7 +91,6 @@ public class ServidorThread extends Thread{
         table.put(nome, utilizador);
         
         System.out.println("O utilizador " + nome + " conectou-se");
-        System.out.println(table.size());
 
         return utilizador.getIdTabela();
     }
@@ -98,11 +98,10 @@ public class ServidorThread extends Thread{
     private byte[] consultRequest(byte[] pdu) throws Exception{
 
         ArrayList<byte[]> aux = new ArrayList<>();
-
+        int n=0;
+        
         for(Utilizador u: table.values()){
             if(u.getIdTabela() != utilizador.getIdTabela()){
-
-                /* Criar threads para cada cliente? */
 
                 System.out.println("A enviar para o utilizador " + u.getIdTabela());
                 
@@ -121,10 +120,15 @@ public class ServidorThread extends Thread{
                 if((char)pduResponse[pduLenght-3] == '1'){
                     aux.add(Arrays.copyOfRange(pduResponse, 7, pduResponse.length - 4));
                     System.out.println("O utilizador " + u.getIdTabela() + " tem o ficheiro");
+                    n++;
                 }
                 else{
                     System.out.println("O utilizador " + u.getIdTabela() + " não tem o ficheiro");
                 }
+            }
+            
+            if(n >= 10){
+                break;
             }
         }
 

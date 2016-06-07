@@ -9,10 +9,10 @@ import java.util.StringTokenizer;
 
 public class ClienteThread extends Thread{
 
-    private Socket client;
-    private int idUtilizador;
-    private String ip;
-    private int porta;
+    private final Socket client;
+    private final int idUtilizador;
+    private final String ip;
+    private final int porta;
 
     public ClienteThread(Socket newclient, int idUtilizador, String ip, int porta){
         this.client = newclient;
@@ -21,6 +21,7 @@ public class ClienteThread extends Thread{
         this.porta = porta;
     }
 
+    @Override
     public void run(){
         try{
           while(true){
@@ -54,6 +55,11 @@ public class ClienteThread extends Thread{
                     }
                 }
 
+                if(found){
+                    ClientUDP cUDP = new ClientUDP(this.porta, idUtilizador);
+                    cUDP.start();
+                }
+                
                 byte[] aux = PDU.consultResponsePDU(idUtilizador, this.ip, found, this.porta);
                 
                 DataOutputStream out = new DataOutputStream(client.getOutputStream());

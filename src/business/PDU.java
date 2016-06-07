@@ -140,7 +140,6 @@ public class PDU {
             byte[] end = (new String("\0")).getBytes();
             System.arraycopy(end, 0, tmp, 0, end.length);
             System.arraycopy(b, 0, tmp, 1, b.length);
-            System.out.println(new String(tmp));
             pdus.put(tmp);
         }
 
@@ -163,7 +162,7 @@ public class PDU {
         aux.put(info);
         aux.put(pduLista);
         aux.put((byte)'\0');
-        System.out.println(new String(pdu));
+        
         return pdu;
     }
     
@@ -177,6 +176,31 @@ public class PDU {
         pdu[4] = 0;
         pdu[5] = 0;
         pdu[6] = 0;
+
+        return pdu;
+    }
+    
+    public static byte[] probeResponsePDU(long timestamp){
+        ByteBuffer aux;
+        String infoString = String.valueOf(timestamp) + '\0';
+
+        byte[] info = infoString.getBytes();
+        int pduSize = 8 + info.length;
+        byte[] pdu = new byte[pduSize];
+        byte[] pduAux = new byte[7];
+
+        aux = ByteBuffer.wrap(pdu);
+
+        pduAux[0] = 1;
+        pduAux[1] = 0;
+        pduAux[2] = 5;
+        pduAux[3] = 0;
+        pduAux[4] = 0;
+        pduAux[5] = 0;
+        pduAux[6] = 0;
+
+        aux.put(pduAux);
+        aux.put(info);
 
         return pdu;
     }

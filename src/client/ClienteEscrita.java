@@ -11,8 +11,15 @@ import business.PDU;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -28,6 +35,7 @@ public class ClienteEscrita {
         int port;
 
         Socket clientSocket = new Socket("localhost", 10000);
+        //Socket clientSocket = new Socket("192.168.1.6", 10000);
 
         port=PDU.getPort();
         String ip = clientSocket.getLocalAddress().getHostAddress();
@@ -101,14 +109,15 @@ public class ClienteEscrita {
         
         int nHosts = Character.getNumericValue((char)pdu[9]);
         int i=11;
-        byte[] probePDU = PDU.probeRequestPDU();
-
+        long max = -1;
+        String idM, ipM, portaM;
+        
         for(int n=0; n<nHosts; n++){
             
             String id ="", ip="", porta="";            
             
             for(; (char)pdu[i] != '\0'; i++){
-                id += ( char)pdu[i];
+                id += (char)pdu[i];
             }
 
             i++;
@@ -124,13 +133,46 @@ public class ClienteEscrita {
             i++;
             
             System.out.println("id: " + id + " ip: " + ip + " porta: " + porta);
-            /* Enviar probe TODO */
-            /*System.out.println("vou enviar para a porta " + porta);
-            Socket probeSocket = new Socket("localhost", Integer.valueOf(porta));
-
-            OutputStream out = probeSocket.getOutputStream();
-            out.write(pdu);*/
             
+            long res = sendProbeRequest(porta, porta);
+            
+            if(max < res){
+                max = res;
+                idM = id;
+                ipM = ip;
+                portaM = porta;
+            }
         }
+    }
+    
+    private static long sendProbeRequest(String address, String porta) throws UnknownHostException, IOException{
+        try {
+            DatagramSocket sock = new DatagramSocket();
+            
+            byte[] buf = PDU.probeRequestPDU();
+            InetAddress ip = InetAddress.getByName(address);
+            
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, ip, Integer.parseInt(porta));
+            sock.send(packet);
+            
+            byte[] response = new byte[36];
+            packet = new DatagramPacket(response, response.length);
+            sock.receive(packet);
+            
+            String tmp = "";
+            
+            for(int i=7; packet.getData()[i] !=  '\0'; i++){
+                tmp += (char)packet.getData()[i];
+            }
+            
+            long tempo = System.currentTimeMillis() - Long.parseLong(tmp);
+            
+            return tempo;
+            
+        } catch (SocketException ex) {
+            Logger.getLogger(ClienteEscrita.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return -1;
     }
 }

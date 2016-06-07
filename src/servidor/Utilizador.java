@@ -1,10 +1,10 @@
 package servidor;
 
 public class Utilizador{
-  private String id;
-  private String port;
-  private String ip;
-  private int idTabela;
+  private final String id;
+  private final String port;
+  private final String ip;
+  private final int idTabela;
 
   public Utilizador(String newid,String newport,String newip, int idTabela){
     this.id=newid;
