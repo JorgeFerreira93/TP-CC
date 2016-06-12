@@ -7,6 +7,7 @@ package business;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -231,7 +232,29 @@ public class PDU {
         return pdu;
     }
     
-    public static byte[] data(byte[] data){
+    public static ArrayList<byte[]> data(byte[] data){
+        
+        int x = 49144;  // chunk size
+        int len = data.length;
+        int counter = 0;
+        byte[] aux = new byte[x];
+        ArrayList<byte[]> response = new ArrayList<>();
+        
+
+        for (int i = 0; i < len - x + 1; i += x){
+            aux = Arrays.copyOfRange(data, i, i + x);
+            response.add(getData(aux));
+        }
+
+        if (len % x != 0){
+            aux = Arrays.copyOfRange(data, len - len % x, len);
+            response.add(getData(aux));
+        }
+        
+        return response;
+    }
+    
+    private static byte[] getData(byte[] data){
         
         ByteBuffer aux;
 
@@ -251,6 +274,20 @@ public class PDU {
 
         aux.put(pduAux);
         aux.put(data);
+
+        return pdu;
+    }
+    
+    public static byte[] endTransfer(){
+        byte[] pdu = new byte[7];
+
+        pdu[0] = 1;
+        pdu[1] = 0;
+        pdu[2] = 9;
+        pdu[3] = 0;
+        pdu[4] = 0;
+        pdu[5] = 0;
+        pdu[6] = 0;
 
         return pdu;
     }

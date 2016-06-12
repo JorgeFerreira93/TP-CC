@@ -17,8 +17,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -191,25 +193,46 @@ public class ClienteEscrita {
         DatagramPacket packet = new DatagramPacket(pdu, pdu.length, ip, Integer.parseInt(porta));
         sock.send(packet);
         
-        System.out.println("Enviei");
-        
-        byte[] response = new byte[48000];
+        byte[] response = new byte[49152];
         packet = new DatagramPacket(response, response.length);
         sock.receive(packet);
         
-        System.out.println("Recebi");
+        ArrayList<byte[]> dataResponse = new ArrayList<>();
+        int i =0;
         
-        int j;
-        
-        for(j=7; (char) packet.getData()[j] != '\0'; j++){
-            System.out.print("'" + packet.getData()[j] + "'");
+        while(packet.getData()[2] != 9){
+
+            System.out.println(packet.getData().length);
+            
+            int tamanho = packet.getData().length;
+
+            byte[] res = new byte[tamanho];
+            System.arraycopy(packet.getData(), 7, res, 0, tamanho-10);
+
+            dataResponse.add(res);
+            System.out.println("Recebi " + i + "  " + res.length);
+            
+            i++;
+            response = new byte[49152];
+            packet = new DatagramPacket(response, response.length);
+            sock.receive(packet);
         }
         
-        byte[] res = new byte[j-7];
-        System.arraycopy(packet.getData(), 7, res, 0, j-7);
+        ByteBuffer aux;
+        int tamanho = 0;
         
-        //FileOutputStream fileOputputStream = new FileOutputStream("teste");
-        Files.write(Paths.get("./src/teste.txt"), res);
+        for(byte[] b : dataResponse){
+            tamanho += b.length;
+        }
+
+        byte[] data = new byte[tamanho];
+
+        aux = ByteBuffer.wrap(data);
         
+        for(byte[] b : dataResponse){
+            aux.put(b);
+        }
+        
+        Files.write(Paths.get("./src/teste3.txt"), data);
     }
 }
