@@ -5,6 +5,7 @@
  */
 package client;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -17,6 +18,8 @@ public class ClienteLeitura extends Thread {
     int port;
     int idUtilizador;
     String ip;
+    ServerSocket serverSocket;
+    Boolean end = false;
 
     public ClienteLeitura(String ip, int port, int idUtilizador){
         this.port = port;
@@ -27,18 +30,22 @@ public class ClienteLeitura extends Thread {
     @Override
     public void run(){
         try{
-            ServerSocket serverSocket = new ServerSocket(this.port);
+            serverSocket = new ServerSocket(this.port);
             
-            while(true){
-
+            while(true || !end){
                 Socket connectionSocket = serverSocket.accept();
-
+                
                 ClienteThread ct = new ClienteThread(connectionSocket, idUtilizador, ip, port);
                 ct.start();
             }
         }
         catch(Exception e){
-            System.out.println(e.toString());
+            //System.out.println(e.toString());
         }
+    }
+    
+    public void kill() throws IOException{
+        this.serverSocket.close();
+        this.end = true;
     }
 }

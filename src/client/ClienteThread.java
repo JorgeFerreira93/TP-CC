@@ -45,7 +45,7 @@ public class ClienteThread extends Thread{
                     musica += (char)pdu[i];
                 }
 
-                File path = new File("./src/client/files");
+                File path = new File("./files");
                 String[] children = path.list();
                 boolean found = false;
               

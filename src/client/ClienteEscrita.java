@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import business.PDU;
 import java.io.DataInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.DatagramPacket;
@@ -58,8 +57,10 @@ public class ClienteEscrita {
 
         ClienteLeitura cl = new ClienteLeitura(ip, port, id);
         cl.start();
+        
+        Boolean leave = false;
 
-        while(true){
+        while(true && !leave){
             System.out.print(">>");
             String request = in.nextLine();
 
@@ -81,6 +82,14 @@ public class ClienteEscrita {
                     }
 
                     break;
+                    
+                case "sair":
+                    byte[] response = PDU.disconnectPDU();
+                    out.write(response);                    
+                    leave = true;
+                    cl.kill();
+                    break;
+                    
                 default:
                     System.out.println("Erro no comando");
                     break;

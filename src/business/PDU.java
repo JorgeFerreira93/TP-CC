@@ -294,6 +294,20 @@ public class PDU {
         return pdu;
     }
     
+    public static byte[] disconnectPDU(){
+        byte[] pdu = new byte[7];
+
+        pdu[0] = 1;
+        pdu[1] = 0;
+        pdu[2] = 8;
+        pdu[3] = 0;
+        pdu[4] = 0;
+        pdu[5] = 0;
+        pdu[6] = 0;
+
+        return pdu;
+    }
+    
     public static int getPort(){
 
         Random random = new Random();

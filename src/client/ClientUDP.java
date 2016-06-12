@@ -14,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  *
@@ -102,7 +101,7 @@ public class ClientUDP extends Thread {
             musica += (char)pdu[i];
         }
         
-        String p = "./src/client/files/" + banda + "-" + musica + ".mp3";
+        String p = "./files/" + banda + "-" + musica + ".mp3";
         Path path = Paths.get(p);
                 
         byte[] data = Files.readAllBytes(path);
@@ -110,10 +109,6 @@ public class ClientUDP extends Thread {
         System.out.println(data.length);
         
         ArrayList<byte[]> response = PDU.data(data);
-        
-        /*for(byte[]b : response){
-            System.out.println(b.length);
-        }*/
         
         return response;
     }

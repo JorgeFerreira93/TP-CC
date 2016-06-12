@@ -51,6 +51,10 @@ public class ServidorThread extends Thread{
                     
                     break;
                     
+                case 8:
+                    System.out.println("O utilizador " + utilizador.getIdTabela()+ " desconectou-se");
+                    table.remove(utilizador.getId());
+                    
                 default:
                     break;
             }
