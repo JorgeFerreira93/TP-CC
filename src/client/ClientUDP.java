@@ -6,9 +6,14 @@
 package client;
 
 import business.PDU;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  *
@@ -30,29 +35,71 @@ public class ClientUDP extends Thread {
             
             while(true){
 
-                byte[] buffer = new byte[256];
+                InetAddress ip;
+                int porta;
                 
-                System.out.println("À espera...");
+                byte[] buffer = new byte[256];
                 
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 serverSocket.receive(packet);
-                
+
                 byte[] receive = packet.getData();
                 
                 switch(receive[2]){
                     case 4:
                         byte[] pdu = PDU.probeResponsePDU(System.currentTimeMillis());
                         
-                        InetAddress ip = packet.getAddress();
-                        int porta = packet.getPort();
+                        ip = packet.getAddress();
+                        porta = packet.getPort();
+                        
                         packet = new DatagramPacket(pdu, pdu.length, ip, porta);
+                        byte[] realData = Arrays.copyOf( packet.getData(), packet.getLength() );
+                        System.out.println("Tamanho?: " + realData.length);
                         
                         serverSocket.send(packet);
+                        break;
+                    
+                    case 6:
+                        byte[] data = getPDUData(receive, packet);
+                        
+                        ip = packet.getAddress();
+                        porta = packet.getPort();
+                        
+                        packet = new DatagramPacket(data, data.length, ip, porta);
+                        
+                        serverSocket.send(packet);
+                        
+                        break;
                 }
             }
         }
         catch(Exception e){
             System.out.println(e.toString());
         }
+    }
+    
+    private byte[] getPDUData(byte[] pdu, DatagramPacket packet) throws IOException{
+        
+        String banda ="", musica="", porta="";
+        int i = 7;
+            
+        for(; (char)pdu[i] != '\0'; i++){
+            banda += (char)pdu[i];
+        }
+
+        i++;
+
+        for(; (char)pdu[i] != '\0'; i++){
+            musica += (char)pdu[i];
+        }
+        
+        String p = "./src/client/files/" + banda + "-" + musica + ".mp3";
+        Path path = Paths.get(p);
+        
+        byte[] data = Files.readAllBytes(path);
+        
+        byte[] pduData = PDU.data(data);
+        
+        return pduData;
     }
 }

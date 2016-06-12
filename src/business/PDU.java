@@ -205,6 +205,56 @@ public class PDU {
         return pdu;
     }
 
+    public static byte[] request(String banda, String musica){
+        
+        ByteBuffer aux;
+        String infoString = banda + '\0' + musica;
+
+        byte[] info = infoString.getBytes();
+        int pduSize = 8 + info.length;
+        byte[] pdu = new byte[pduSize];
+        byte[] pduAux = new byte[7];
+
+        aux = ByteBuffer.wrap(pdu);
+
+        pduAux[0] = 1;
+        pduAux[1] = 0;
+        pduAux[2] = 6;
+        pduAux[3] = 0;
+        pduAux[4] = 0;
+        pduAux[5] = 0;
+        pduAux[6] = 0;
+
+        aux.put(pduAux);
+        aux.put(info);
+
+        return pdu;
+    }
+    
+    public static byte[] data(byte[] data){
+        
+        ByteBuffer aux;
+
+        int pduSize = 8 + data.length;
+        byte[] pdu = new byte[pduSize];
+        byte[] pduAux = new byte[7];
+
+        aux = ByteBuffer.wrap(pdu);
+
+        pduAux[0] = 1;
+        pduAux[1] = 0;
+        pduAux[2] = 7;
+        pduAux[3] = 0;
+        pduAux[4] = 0;
+        pduAux[5] = 0;
+        pduAux[6] = 0;
+
+        aux.put(pduAux);
+        aux.put(data);
+
+        return pdu;
+    }
+    
     public static int getPort(){
 
         Random random = new Random();
