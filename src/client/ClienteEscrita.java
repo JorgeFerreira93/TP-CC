@@ -198,21 +198,20 @@ public class ClienteEscrita {
         sock.receive(packet);
         
         ArrayList<byte[]> dataResponse = new ArrayList<>();
-        int i =0;
         
         while(packet.getData()[2] != 9){
-
-            System.out.println(packet.getData().length);
             
             int tamanho = packet.getData().length;
 
             byte[] res = new byte[tamanho];
-            System.arraycopy(packet.getData(), 7, res, 0, tamanho-10);
+            System.arraycopy(packet.getData(), 7, res, 0, tamanho-7);
 
             dataResponse.add(res);
-            System.out.println("Recebi " + i + "  " + res.length);
             
-            i++;
+            byte[] aux = new byte[1];
+            packet = new DatagramPacket(aux, aux.length, ip, Integer.parseInt(porta));
+            sock.send(packet);
+            
             response = new byte[49152];
             packet = new DatagramPacket(response, response.length);
             sock.receive(packet);

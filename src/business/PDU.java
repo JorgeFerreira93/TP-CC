@@ -237,24 +237,26 @@ public class PDU {
         int x = 49144;  // chunk size
         int len = data.length;
         int counter = 0;
+        int j=1;
         byte[] aux = new byte[x];
         ArrayList<byte[]> response = new ArrayList<>();
         
 
         for (int i = 0; i < len - x + 1; i += x){
             aux = Arrays.copyOfRange(data, i, i + x);
-            response.add(getData(aux));
+            response.add(getData(aux, String.valueOf(j)));
+            j++;
         }
 
         if (len % x != 0){
             aux = Arrays.copyOfRange(data, len - len % x, len);
-            response.add(getData(aux));
+            response.add(getData(aux, String.valueOf(j)));
         }
         
         return response;
     }
     
-    private static byte[] getData(byte[] data){
+    private static byte[] getData(byte[] data, String i){
         
         ByteBuffer aux;
 
@@ -267,7 +269,7 @@ public class PDU {
         pduAux[0] = 1;
         pduAux[1] = 0;
         pduAux[2] = 7;
-        pduAux[3] = 0;
+        pduAux[3] = new Byte(i);
         pduAux[4] = 0;
         pduAux[5] = 0;
         pduAux[6] = 0;

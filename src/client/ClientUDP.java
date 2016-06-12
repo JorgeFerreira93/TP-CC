@@ -64,17 +64,14 @@ public class ClientUDP extends Thread {
                         ip = packet.getAddress();
                         porta = packet.getPort();
                         
-                        int i=0;
-                        
                         for(byte[] b: data){
-                            System.out.println("Mandei " + i);i++;
                             packet = new DatagramPacket(b, b.length, ip, porta);
-                            System.out.println(packet.getData().length);
-                            serverSocket.send(packet);      
-                            Thread.sleep(1000);                  
+                            serverSocket.send(packet);
+                            
+                            byte[] res = new byte[1];                
+                            packet = new DatagramPacket(res, res.length);
+                            serverSocket.receive(packet);
                         }
-                        
-                        Thread.sleep(5000);
                         
                         byte[] end = PDU.endTransfer();
                         
